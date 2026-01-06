@@ -1,7 +1,5 @@
-# simulador_interativo_minimo.py
-# Simulador de carteiras 100% interativo (sem portfolio padrão)
+# simulador_interativo.py
 
-# HIPÓTESES
 HIPOTESES = {
     "CDI": 0.10,
     "IPCA": 0.04,
@@ -9,60 +7,48 @@ HIPOTESES = {
     "USD_APP": 0.02
 }
 
-# Grupos de ações
-ACOES_BR = ["petr4", "vale3", "itub4", "bbdc4", "abev3"]
-ACOES_EX = ["aapl", "msft", "amzn", "nvda", "googl"]
+ACOES_BR = ["PETR4", "VALE3", "ITUB4", "BBDC4", "ABEV3"]
+ACOES_EUA = ["AAPL", "MSFT", "AMZN", "NVDA", "GOOGL"]
 
-# Ativos e retornos hipotéticos
 assets = {
-    "tesouro_selic": {"return": HIPOTESES["SELIC"]},
-    "tesouro_ipca_5": {"return": HIPOTESES["IPCA"] + 0.05},
-    "lci_lca_95_cdi": {"return": HIPOTESES["CDI"] * 0.95},
-    "HGLG11": {"return": 0.10},
-    "IVVB11": {"return": (1 + 0.09) * (1 + HIPOTESES["USD_APP"]) - 1},
-    "debentures_vale": {"return": HIPOTESES["IPCA"] + 0.06},
-    "petr4": {"return": 0.12},
-    "vale3": {"return": 0.11},
-    "itub4": {"return": 0.09},
-    "bbdc4": {"return": 0.085},
-    "abev3": {"return": 0.08},
-    "aapl": {"return": (1 + 0.11) * (1 + HIPOTESES["USD_APP"]) - 1},
-    "msft": {"return": (1 + 0.11) * (1 + HIPOTESES["USD_APP"]) - 1},
-    "amzn": {"return": (1 + 0.12) * (1 + HIPOTESES["USD_APP"]) - 1},
-    "nvda": {"return": (1 + 0.15) * (1 + HIPOTESES["USD_APP"]) - 1},
-    "googl": {"return": (1 + 0.10) * (1 + HIPOTESES["USD_APP"]) - 1},
-    "BOVA11": {"return": 0.08},
+    "tesouro_direto": {"return": HIPOTESES["SELIC"]},
+    "tesouro_ipca": {"return": HIPOTESES["IPCA"] + 0.05},
+    "lci": {"return": HIPOTESES["CDI"] * 0.95},
+    "lca": {"return": HIPOTESES["CDI"] * 0.95},
+    "fundos_imobiliarios": {"return": 0.10},
+    "debentures": {"return": HIPOTESES["IPCA"] + 0.06},
+    "etf_eua": {"return": (1 + 0.09) * (1 + HIPOTESES["USD_APP"]) - 1},
+    "etf_br": {"return": 0.08},
     "dolar": {"return": HIPOTESES["USD_APP"]},
     "ouro": {"return": 0.03},
     "bitcoin": {"return": 0.30},
-    "CDB_100_CDI": {"return": HIPOTESES["CDI"]},
-    "cdb_prefixado": {"return": 0.085},
-    "fundo_investimento": {"return": 0.095},
+    "cdb": {"return": HIPOTESES["CDI"]},
+    "cdb_pre_fixado": {"return": 0.085},
+    "fundos_de_investimento": {"return": 0.095},
     "carteira_administrada": {"return": 0.075}
 }
 
-# Expande acoes_br e acoes_ex
 def expandir(port):
     novo = {}
     for k, w in port.items():
         if k == "acoes_br":
             for a in ACOES_BR:
                 novo[a] = novo.get(a, 0) + w / len(ACOES_BR)
-        elif k == "acoes_ex":
-            for a in ACOES_EX:
-                novo[a] = novo.get(a, 0) + w / len(ACOES_EX)
+        elif k == "acoes_eua":
+            for a in ACOES_EUA:
+                novo[a] = novo.get(a, 0) + w / len(ACOES_EUA)
         else:
             novo[k] = novo.get(k, 0) + w
     return novo
 
-# Normaliza pesos
 def normalizar(port):
     s = sum(port.values())
     return {k: v / s for k, v in port.items()}
 
-# Input da carteira
-print("Digite os ativos no formato: ativo peso  (ex: acoes_br 0.3)")
-print("Use 'acoes_br' ou 'acoes_ex' para ações. Digite 'pronto' ao final.\n")
+# INPUT DA CARTEIRA
+print("Digite os ativos no formato: ativo peso_em_%")
+print("Exemplo: acoes_br 30 | etf_eua 15")
+print("Digite 'pronto' quando finalizar.\n")
 
 portfolio = {}
 while True:
@@ -70,28 +56,23 @@ while True:
     if entrada == "pronto":
         break
     ativo, peso = entrada.split()
-    portfolio[ativo] = portfolio.get(ativo, 0) + float(peso)
+    portfolio[ativo] = portfolio.get(ativo, 0) + float(peso) / 100
 
 portfolio = normalizar(expandir(portfolio))
 
-# Inputs financeiros
 capital = float(input("\nCapital inicial (R$): "))
 aporte = float(input("Contribuição anual (R$): "))
 anos = int(input("Horizonte (anos): "))
 
-# Retorno esperado
 retorno = 0
-for k, w in portfolio.items():
-    retorno += w * assets[k]["return"]
-
-# Impressão da carteira
 print("\n=== COMPOSIÇÃO DA CARTEIRA ===")
 for k, w in portfolio.items():
-    print(f"{k:12s} | Peso: {w:.2%} | Retorno: {assets[k]['return']:.2%}")
+    r = assets[k]["return"]
+    retorno += w * r
+    print(f"{k:20s} | Peso: {w*100:.2f}% | Retorno: {r*100:.2f}%")
 
-print(f"\nRetorno anual esperado da carteira: {retorno:.2%}\n")
+print(f"\nRetorno anual esperado da carteira: {retorno*100:.2f}%\n")
 
-# Projeção
 print("=== PROJEÇÃO ===")
 valor = capital
 for ano in range(1, anos + 1):
