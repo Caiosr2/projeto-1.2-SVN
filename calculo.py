@@ -1,7 +1,7 @@
 TAXAS = {
-    "CDI": 0.10,
+    "CDI": 0.12,
     "IPCA": 0.05,
-    "SELIC": 0.10,
+    "SELIC": 0.11,
     "USD": 0.02
 }
 
@@ -13,27 +13,27 @@ assets = {
     "tesouro_ipca": {"return": TAXAS["IPCA"] + 0.05},
     "lci": {"return": TAXAS["CDI"] * 0.95},
     "lca": {"return": TAXAS["CDI"] * 0.95},
-    "fundos_imobiliarios": {"return": 0.10},
+    "fundos_imobiliarios": {"return": 0.12},
     "debentures": {"return": TAXAS["IPCA"] + 0.06},
     "etf_eua": {"return": (1 + 0.09) * (1 + TAXAS["USD"]) - 1},
-    "etf_br": {"return": 0.08},
+    "etf_br": {"return": 0.09},
     "dolar": {"return": TAXAS["USD"]},
     "ouro": {"return": 0.03},
-    "bitcoin": {"return": 0.20},
+    "bitcoin": {"return": 0.18},
     "cdb": {"return": TAXAS["CDI"]},
-    "cdb_pre_fixado": {"return": 0.105},
+    "cdb_pre_fixado": {"return": 0.115},
     "fundos_de_investimento": {"return": 0.095},
     "carteira_administrada": {"return": 0.12},
 
     "petr4": {"return": 0.14},
-    "vale3": {"return": 0.13},
-    "itub4": {"return": 0.12},
-    "bbdc4": {"return": 0.12},
-    "abev3": {"return": 0.11},
-    "aapl": {"return": 0.13},
+    "vale3": {"return": 0.14},
+    "itub4": {"return": 0.13},
+    "bbdc4": {"return": 0.13},
+    "abev3": {"return": 0.12},
+    "aapl": {"return": 0.12},
     "msft": {"return": 0.13},
     "amzn": {"return": 0.15},
-    "nvda": {"return": 0.18},
+    "nvda": {"return": 0.16},
     "googl": {"return": 0.13}
 }
 
