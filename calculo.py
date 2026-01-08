@@ -1,26 +1,26 @@
-HIPOTESES = {
+TAXAS = {
     "CDI": 0.10,
     "IPCA": 0.05,
     "SELIC": 0.10,
-    "USD_APP": 0.02
+    "USD": 0.02
 }
 
 ACOES_BR = ["petr4", "vale3", "itub4", "bbdc4", "abev3"]
 ACOES_EUA = ["aapl", "msft", "amzn", "nvda", "googl"]
 
 assets = {
-    "tesouro_direto": {"return": HIPOTESES["SELIC"]},
-    "tesouro_ipca": {"return": HIPOTESES["IPCA"] + 0.05},
-    "lci": {"return": HIPOTESES["CDI"] * 0.95},
-    "lca": {"return": HIPOTESES["CDI"] * 0.95},
+    "tesouro_direto": {"return": TAXAS["SELIC"]},
+    "tesouro_ipca": {"return": TAXAS["IPCA"] + 0.05},
+    "lci": {"return": TAXAS["CDI"] * 0.95},
+    "lca": {"return": TAXAS["CDI"] * 0.95},
     "fundos_imobiliarios": {"return": 0.10},
-    "debentures": {"return": HIPOTESES["IPCA"] + 0.06},
-    "etf_eua": {"return": (1 + 0.09) * (1 + HIPOTESES["USD_APP"]) - 1},
+    "debentures": {"return": TAXAS["IPCA"] + 0.06},
+    "etf_eua": {"return": (1 + 0.09) * (1 + TAXAS["USD"]) - 1},
     "etf_br": {"return": 0.08},
-    "dolar": {"return": HIPOTESES["USD_APP"]},
+    "dolar": {"return": TAXAS["USD"]},
     "ouro": {"return": 0.03},
     "bitcoin": {"return": 0.20},
-    "cdb": {"return": HIPOTESES["CDI"]},
+    "cdb": {"return": TAXAS["CDI"]},
     "cdb_pre_fixado": {"return": 0.105},
     "fundos_de_investimento": {"return": 0.095},
     "carteira_administrada": {"return": 0.12},
@@ -54,8 +54,7 @@ def normalizar(port):
     s = sum(port.values())
     return {k: v / s for k, v in port.items()}
 
-# INPUT DA CARTEIRA
-print("Digite os ativos no formato: ativo peso_em_%")
+print("Digite os ativos no formato: nome_meio_sobrenome porcentagem(sem %)")
 print("Exemplo: acoes_br 30 | etf_eua 15")
 print("Digite 'pronto' quando finalizar.\n")
 
@@ -71,7 +70,8 @@ portfolio = normalizar(expandir(portfolio))
 
 capital = float(input("\nCapital inicial (R$): "))
 aporte = float(input("Contribuição anual (R$): "))
-anos = int(input("Horizonte (anos): "))
+anos = int(input("Tempo investido (anos): "))
+VTI = capital+(aporte*anos)
 
 retorno = 0
 print("\n=== COMPOSIÇÃO DA CARTEIRA ===")
@@ -88,5 +88,16 @@ for ano in range(1, anos + 1):
     valor += aporte
     valor *= (1 + retorno)
     print(f"Ano {ano:2d} → R$ {valor:,.2f}")
+
+
+print("\n" + "-" * 40)
+print(f"{'Resumo do Investimento':^40}")
+print("-" * 40)
+
+print(f"{'Valor total investido (R$):':<30} {VTI:>10,.2f}")
+print(f"{'Lucro obtido (R$):':<30} {(valor - VTI):>10,.2f}")
+print(f"{'Valorização (%):':<30} {((valor / VTI) * 100):>10.2f}")
+
+print("-" * 40)
 
 print("\nSimulação finalizada.")
